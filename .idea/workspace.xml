@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fb2ce1f8-1e96-4adc-a300-11c034879939" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ml-train/preprocess.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ml-train/CONV-MAIN.py" beforeDir="false" afterPath="$PROJECT_DIR$/ml-train/CONV-MAIN.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ml-train/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/ml-train/preprocess.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +52,12 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/data" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="CONV-MAIN" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="photo-organizer" />
@@ -101,7 +107,7 @@
       <workItem from="1768662891442" duration="1461000" />
       <workItem from="1768664580387" duration="1415000" />
       <workItem from="1768666100217" duration="1490000" />
-      <workItem from="1768671260005" duration="2015000" />
+      <workItem from="1768671260005" duration="2819000" />
     </task>
     <servers />
   </component>
