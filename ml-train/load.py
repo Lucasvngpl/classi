@@ -2,6 +2,7 @@ from PIL import Image
 from tensorflow import keras
 import tensorflow as tf
 import os
+from model_params import *
 
 def create_augmentation():
     return keras.Sequential([
@@ -20,8 +21,8 @@ def load_all(fp="../dataset-full"):
         os.path.join(fp, "train"),
         labels="inferred",
         label_mode="binary",
-        batch_size=32,
-        image_size=(512, 512),
+        batch_size=BATCH_SIZE,
+        image_size=(IMG_SIZE, IMG_SIZE),
         shuffle=True,
         seed=67
     )
@@ -31,8 +32,8 @@ def load_all(fp="../dataset-full"):
         os.path.join(fp, "valid"),
         labels="inferred",
         label_mode="binary",
-        batch_size=32,
-        image_size=(512, 512),
+        batch_size=BATCH_SIZE,
+        image_size=(IMG_SIZE, IMG_SIZE),
         shuffle=False
     )
 
@@ -41,8 +42,8 @@ def load_all(fp="../dataset-full"):
         os.path.join(fp, "test"),
         labels="inferred",
         label_mode="binary",
-        batch_size=32,
-        image_size=(512, 512),
+        batch_size=BATCH_SIZE,
+        image_size=(IMG_SIZE, IMG_SIZE),
         shuffle=False
     )
 

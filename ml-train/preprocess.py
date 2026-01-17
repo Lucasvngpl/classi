@@ -2,6 +2,7 @@ from PIL import Image
 from pathlib import Path
 import numpy as np
 import shutil
+from model_params import *
 
 class Preprocessor:
     def __init__(self):
@@ -13,17 +14,17 @@ class Preprocessor:
 
         # Recalc scaled
         w, h = im.size
-        scale = self.IMG_SIZE / min(w, h)
+        scale = IMG_SIZE / min(w, h)
         w, h = int(w * scale), int(h * scale)
 
         # Scale
         im = im.resize((w, h), Image.LANCZOS)
 
         # Re-crop
-        l = (w - self.IMG_SIZE) // 2
-        t = (h - self.IMG_SIZE) // 2
-        r = l + self.IMG_SIZE
-        b = t + self.IMG_SIZE
+        l = (w - IMG_SIZE) // 2
+        t = (h - IMG_SIZE) // 2
+        r = l + IMG_SIZE
+        b = t + IMG_SIZE
 
         im = im.crop((l, t, r, b))
 
