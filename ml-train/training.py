@@ -2,21 +2,19 @@ import tensorflow as tf
 from pathlib import Path
 import matplotlib.pyplot as plt
 from model import Conv
+from load import load_all
 
 class Trainer:
     def __init__(self):
-        self.BASE_PATH = "../data/" # base path to data
-        self.IMG_SIZE = 512
-        self.BATCH_SIZE = 32
-        self.EPOCHS = 10
+    
 
         self.conv = Conv()
         self.conv.compile_model()
 
         # Placeholders for the three datasets
-        self.train_data = None      # Training set (70%)
-        self.valid_data = None      # Validation set (15%) - used to detect overfitting
-        self.test_data = None       # Test set (15%) - final unseen evaluation
+        self.train_data = train_ds      # Training set (70%)
+        self.valid_data = valid_ds      # Validation set (15%) - used to detect overfitting
+        self.test_data = test_ds       # Test set (15%) - final unseen evaluation
 
         # place holder for load function
     
@@ -32,7 +30,7 @@ class Trainer:
 
     def train(self):
         # check if loaded
-        if train_data is None or valid_data is None or test_data is None:
+        if train_ds is None or valid_ds is None or test_ds is None:
             raise ValueError("Datasets not loaded. Please load datasets before training.")
         
         # Train the model
