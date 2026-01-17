@@ -6,8 +6,6 @@ import shutil
 class Preprocessor:
     def __init__(self):
         self.BASE_PATH = "../data/"
-        self.IMG_SIZE = 512
-        self.BATCH_SIZE = 32
 
     # Resize image. Maintain aspect ratio
     def resize(self, fp):
