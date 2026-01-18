@@ -107,16 +107,6 @@ class Trainer:
         self.conv.model.save("classifier_final.h5")
         print("\nFinal model saved as 'final_school_classifier.h5'")
 
-        # Then, save as a .tflite
-        converter = tf.lite.TFLiteConverter.from_keras_model(self.conv.model)
-        converter.optimizations = [tf.lite.Optimize.DEFAULT]
-        tflite_model = converter.convert()
-
-        with open("classifier_final.tflite", "wb") as f:
-            f.write(tflite_model)
-
-        print("Model saved as 'classifier_final.tflite'")
-
 if __name__ == "__main__":
     trainer = Trainer()
 

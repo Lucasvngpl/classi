@@ -7,3 +7,5 @@
 .idea
 .venv
 .DS_store
+
+test1.py

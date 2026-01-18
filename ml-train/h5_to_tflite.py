@@ -4,7 +4,7 @@ import tempfile
 import shutil
 
 
-def h5_to_tflite(h5_path="classifier_final.h5", output_path="final.tflite"):
+def h5_to_tflite(h5_path="classifier_final.h5", output_path="final_9722.tflite"):
     model = keras.models.load_model(h5_path)
 
     temp_dir = tempfile.mkdtemp()
