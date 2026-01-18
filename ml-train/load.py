@@ -6,12 +6,7 @@ from model_params import *
 
 def create_augmentation():
     return keras.Sequential([
-        tf.keras.layers.RandomFlip("horizontal"),
-        tf.keras.layers.RandomRotation(0.05),
-        tf.keras.layers.RandomZoom(0.1),
-        tf.keras.layers.RandomContrast(0.15),
-        tf.keras.layers.RandomBrightness(0.15),
-        tf.keras.layers.Lambda(lambda x: tf.clip_by_value(x, 0.0, 1.0))  # Clip
+        tf.keras.layers.RandomFlip("horizontal")
     ], name="augmentation")
 
 def load_all(fp="../dataset-full"):
@@ -78,7 +73,7 @@ def load_all(fp="../dataset-full"):
     )
 
     # Performance stuff
-    train_ds = train_ds.cache().prefetch(buffer_size=tf.data.AUTOTUNE)
+    train_ds = train_ds.prefetch(buffer_size=tf.data.AUTOTUNE)
     valid_ds = valid_ds.cache().prefetch(buffer_size=tf.data.AUTOTUNE)
     test_ds = test_ds.cache().prefetch(buffer_size=tf.data.AUTOTUNE)
 

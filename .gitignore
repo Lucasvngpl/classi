@@ -1,4 +1,7 @@
+/data*
+
 # Model files
+/models
 *.h5
 
 .idea

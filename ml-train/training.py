@@ -3,34 +3,55 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from model import Conv
 from load import load_all
+import os
+import datetime
+import ssl
+from model_params import *
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 class Trainer:
     def __init__(self):
-    
-
         self.conv = Conv()
         self.conv.compile_model()
 
-        # Placeholders for the three datasets
-        self.train_data = train_ds      # Training set (70%)
-        self.valid_data = valid_ds      # Validation set (15%) - used to detect overfitting
-        self.test_data = test_ds       # Test set (15%) - final unseen evaluation
+        self.train_data, self.valid_data, self.test_data = load_all()
 
-        # place holder for load function
+        os.makedirs("../models/checkpoints", exist_ok=True)
+        os.makedirs("../models/final", exist_ok=True)
     
     def get_callbacks(self):
         # Early stopping callback
-        early_stopping = tf.keras.callbacks.EarlyStopping(
-            monitor="val_loss",      # Monitor validation loss
-            patience=3,              # Stop after 3 epochs of no improvement
-            restore_best_weights=True # Restore model weights from the epoch with the best validation loss
-        )
+        callbacks = [
+            tf.keras.callbacks.EarlyStopping(
+                monitor="val_loss",      # Monitor validation loss
+                patience=5,              # Stop after 5 epochs of no improvement
+                restore_best_weights=True,  # Restore model weights from the epoch with the best validation loss
+                verbose = 1
+            ),
 
-        return [early_stopping]
+            tf.keras.callbacks.ModelCheckpoint(
+                filepath=f"../models/checkpoints/model_epoch_{{epoch:02d}}_val_acc_{{val_accuracy:.4f}}.h5",
+                monitor="val_accuracy",
+                save_best_only=True,
+                mode="max",
+                verbose=1,
+            ),
+
+            tf.keras.callbacks.ReduceLROnPlateau(
+                monitor="val_loss",
+                factor=0.5,
+                patience=3,
+                min_lr=1e-7,
+                verbose=1
+            )
+        ]
+
+        return callbacks
 
     def train(self):
         # check if loaded
-        if train_ds is None or valid_ds is None or test_ds is None:
+        if self.train_data is None or self.valid_data is None or self.test_data is None:
             raise ValueError("Datasets not loaded. Please load datasets before training.")
         
         # Train the model
@@ -38,19 +59,18 @@ class Trainer:
         # validation_data is used ONLY for monitoring (no weight updates)
         self.history = self.conv.model.fit( # Saves the training results returned by fit() into self.history.
             self.train_data,                       # Training data - model learns from this
-            epochs=self.EPOCHS,                    # HYPERPARAMETER: Number of full passes through data
+            epochs=EPOCHS,                    # HYPERPARAMETER: Number of full passes through data
             validation_data=self.valid_data,       # Validation data - detects overfitting
             callbacks=self.get_callbacks(),        # Apply anti-overfitting callbacks
             verbose=1                              # Print progress
         )
 
-        # After training, we can check if overfitting occurred by comparing
-        # training accuracy vs validation accuracy in the history
-        
-        print("\n" + "="*50)
-        print("Training Complete!")
-        print("="*50 + "\n")
-    
+        # Best res
+        best_epoch = self.history.history["val_accuracy"].index(max((self.history.history["val_accuracy"])))
+        best_acc = self.history.history["val_accuracy"][best_epoch]
+
+        print(f"Best accuracy: {best_acc} (epoch: {best_epoch})")
+
     def evaluate(self):
         # Evaluate the model on the test dataset
         test_loss, test_accuracy = self.conv.model.evaluate(self.test_data)
@@ -83,15 +103,25 @@ class Trainer:
         plt.show()
 
     def save_model(self):
-        """Save the final trained model to disk"""
-        self.conv.model.save('final_school_image_classifier.h5')
+        # First, save as a .h5
+        self.conv.model.save("classifier_final.h5")
         print("\nFinal model saved as 'final_school_classifier.h5'")
+
+        # Then, save as a .tflite
+        converter = tf.lite.TFLiteConverter.from_keras_model(self.conv.model)
+        converter.optimizations = [tf.lite.Optimize.DEFAULT]
+        tflite_model = converter.convert()
+
+        with open("classifier_final.tflite", "wb") as f:
+            f.write(tflite_model)
+
+        print("Model saved as 'classifier_final.tflite'")
 
 if __name__ == "__main__":
     trainer = Trainer()
-    # trainer.load_data()  # Implement data loading method
+
     trainer.train()
     trainer.evaluate()
+
     trainer.plot_history()
     trainer.save_model()
-

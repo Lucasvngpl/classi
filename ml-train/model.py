@@ -26,33 +26,46 @@ class Conv:
         return gpus
 
     def new_model(self, input_shape=(IMG_SIZE, IMG_SIZE, 3)):
-
-        # Load pre-trained EfficientNetB0
-        base_model = tf.keras.applications.EfficientNetB0(
-            include_top=False,      # Remove ImageNet classifier so it replaces the original classifier classes with our own
-            weights="imagenet",     # Use pre-trained weights
-            input_shape=input_shape,
-            pooling=None           # Pooling later
-        )
         
-        # Freeze base model, read more on this
-        base_model.trainable = False
-        
-        # Build: EfficientNet → Dense(128) → Dense(1)
+        # Raw CNN
         model = tf.keras.models.Sequential([
-            base_model,
-            tf.keras.GlobalAveragePooling2D(), # Ensure output is flat vector
-            tf.keras.layers.Dropout(0.3), 
-            tf.keras.layers.Dense(128, activation="relu"), # Newly added dense layer with 128 units
+            tf.keras.layers.InputLayer(input_shape=input_shape),
+
+            tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
+            tf.keras.layers.MaxPooling2D((2, 2)),
+            tf.keras.layers.BatchNormalization(),
+
+            # Second conv block
+            tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+            tf.keras.layers.MaxPooling2D((2, 2)),
+            tf.keras.layers.BatchNormalization(),
+
+            # Third conv block
+            tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+            tf.keras.layers.MaxPooling2D((2, 2)),
+            tf.keras.layers.BatchNormalization(),
+
+            # Fourth conv block
+            tf.keras.layers.Conv2D(256, (3, 3), activation='relu'),
+            tf.keras.layers.MaxPooling2D((2, 2)),
+            tf.keras.layers.BatchNormalization(),
+
+            # Flatten and dense layers
+            tf.keras.layers.GlobalAveragePooling2D(),
+            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dense(256, activation='relu'),
+            tf.keras.layers.BatchNormalization(),
+            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dense(128, activation='relu'),
             tf.keras.layers.Dropout(0.3),
-            tf.keras.layers.Dense(1, activation="sigmoid") # Final output layer for binary classification spits out probability
+            tf.keras.layers.Dense(1, activation='sigmoid')
         ])
-    
 
         return model
-    def compile_model(self): # tells keras how to train the model
+
+    def compile_model(self, lr=1e-3): # tells keras how to train the model
         self.model.compile(
-            optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4), # Adam optimizer with learning rate, updates weights based on loss
+            optimizer=tf.keras.optimizers.Adam(learning_rate=lr), # Adam optimizer with learning rate, updates weights based on loss
             loss="binary_crossentropy", # loss function for binary classification
             metrics=["accuracy"] # track accuracy during training   
         )
